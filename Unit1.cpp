@@ -1,4 +1,4 @@
-﻿//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 
 #include <vcl.h>
 //#include <comobj.hpp>
@@ -325,7 +325,7 @@ DWORD WINAPI WriteThread_SM(LPVOID)
  overlappedwr_SM.hEvent = CreateEvent(NULL, true, true, NULL);   	  //создать событие
  while(1)
   {WriteFile(COMport_SM, bufwr_SM, strlen(bufwr_SM), &temp, &overlappedwr_SM);  //записать байты в порт (перекрываемая операция!)
-   signal = WaitForSingleObject(overlappedwr_SM.hEvent, INFINITE);	  //приостановить поток, пока не завершится перекрыва�емая операция WriteFile
+   signal = WaitForSingleObject(overlappedwr_SM.hEvent, INFINITE);	  //приостановить поток, пока не завершится перекрываАµмая операция WriteFile
 
    if((signal == WAIT_OBJECT_0) && (GetOverlappedResult(COMport_SM, &overlappedwr_SM, &temp, true)))	//если операция завершилась успешно
 	 {
@@ -398,11 +398,12 @@ DWORD WINAPI WriteThread_SM(LPVOID)
 
 	 ShowMessage("Press Enter to start measurment");
 
-	 Sleep(150);
 
 	 while(len < (lf+step))
 	  {
-        ResetEvent(overlappedspectrgo_AER.hEvent);
+		Sleep(5000);
+
+		ResetEvent(overlappedspectrgo_AER.hEvent);
 
 		ResumeThread(reader_AER);
 		WaitForSingleObject(overlappedspectrgo_AER.hEvent, INFINITE);
@@ -421,8 +422,6 @@ DWORD WINAPI WriteThread_SM(LPVOID)
 		WaitForSingleObject(overlappedspectrgo_SM.hEvent, INFINITE);
 
 
-		Sleep(100);
-
 		len+= step;
 	  }
 
@@ -430,7 +429,7 @@ DWORD WINAPI WriteThread_SM(LPVOID)
 	  fl=0;
 
 
-	  ShowMessage("Enjoy");
+	  ShowMessage("Measurement has finished successfully");
 
 	  Form1->StaticText3->Enabled =  true;
 	  Form1->StaticText4->Enabled =  true;
@@ -622,7 +621,7 @@ void COMOpen()
    data = fopen("Aeroel_Log.txt", "wb+");
 
    if(data==NULL){		//если произошла ошибка открытия файла
-	 ShowMessage("File \"Aeroel_Log.txt\" havn't created!");
+	 ShowMessage("File \"Aeroel_Log.txt\" hasn't created!");
    }
 
  PurgeComm(COMport_AER, PURGE_RXCLEAR);	//очистить принимающий буфер порта
@@ -703,7 +702,7 @@ void __fastcall TForm1::SpeedButton1Click(TObject *Sender)
 
 	 if(COMport_AER != INVALID_HANDLE_VALUE)
    {
-    //показать/спрятать элементы на форме
+	//показать/спрятать элементы на форме
 	Form1->GroupBox1->Enabled = true;
 	//Form1->GroupBox2->Enabled = false;
 	Form1->CheckBox1->Enabled = false;
@@ -744,6 +743,7 @@ void __fastcall TForm1::SpeedButton1Click(TObject *Sender)
 	counter_AER = 0;	//сбрасываем счётчик байтов
 	counter_SM = 0;	//сбрасываем счётчик байтов
    }
+
   }
 
  else
